@@ -1,5 +1,7 @@
 package it.unibz.butterfly_net.ingestion_api.core;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unibz.butterfly_net.ingestion_api.core.utils.Config;
 import it.unibz.butterfly_net.ingestion_api.core.errors.CredentialsMismatchError;
 import it.unibz.butterfly_net.ingestion_api.core.errors.MissingRequiredHeaderError;
@@ -70,9 +72,16 @@ public class IngestionService {
         return Instant.now().toEpochMilli();
     }
 
-    // TODO: properly parse to JSON
-    @SuppressWarnings("unused")
     private String requestToJson(Map<String, String> headers, Map<String, List<String>> queryParams, String body) {
-        return "";
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(Map.of(
+                    "headers", headers,
+                    "queryParams", queryParams,
+                    "body", body
+            ));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -1,5 +1,7 @@
 package it.unibz.butterfly_net.ingestion_api.core;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unibz.butterfly_net.ingestion_api.core.errors.CredentialsMismatchError;
 import it.unibz.butterfly_net.ingestion_api.core.errors.MissingRequiredHeaderError;
 import it.unibz.butterfly_net.ingestion_api.core.errors.ProjectNotFoundError;
@@ -12,9 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class IngestionServiceTest {
     private IngestionService underTest;
-
-    private ProjectRepository projectRepository;
-    private RawDataRepository rawDataRepository;
 
     @Test
     void givenNoProjectIdHeader_itThrowsMissingHeader() {
@@ -108,8 +107,23 @@ class IngestionServiceTest {
 
         // ... then
         RawDataEntry lastEntry = spyRawDataRepository.getLastEntry();
+        String expectedJson = generateExpectedJson(headers, emptyQueryParams, emptyBody);
         assertNotNull(lastEntry);
         assertEquals(lastEntry.projectId(), projectId);
+        assertEquals(lastEntry.content(), expectedJson);
+    }
+
+    private String generateExpectedJson(Map<String, String> headers, Map<String, List<String>> queryParams, String body) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(Map.of(
+                    "headers", headers,
+                    "queryParams", queryParams,
+                    "body", body
+            ));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private SpyRawDataRepository spyDataRepo() {
