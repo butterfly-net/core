@@ -36,8 +36,8 @@ public class HttpServer {
             logger.info(ctx.body());
         });
 
-        ProjectRepository projectRepository = new InMemoryProjectRepository();
-        RawDataRepository rawDataRepository = new InMemoryRawDataRepository();
+        ProjectRepository projectRepository = new PostgreSQLProjectRepository();
+        RawDataRepository rawDataRepository = new PostgreSQLRawDataRepository();
 
         app.post("/ingest", ctx -> new IngestionService(rawDataRepository, projectRepository)
                 .ingest(ctx.headerMap(), ctx.queryParamMap(), ctx.body())
