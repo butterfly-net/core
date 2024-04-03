@@ -8,12 +8,23 @@ import it.unibz.butterfly_net.ingestion_api.core.RawDataRepository;
 import it.unibz.butterfly_net.ingestion_api.core.errors.CredentialsMismatchError;
 import it.unibz.butterfly_net.ingestion_api.core.errors.MissingRequiredHeaderError;
 import it.unibz.butterfly_net.ingestion_api.core.errors.ProjectNotFoundError;
+import it.unibz.butterfly_net.ingestion_api.core.utils.Config;
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.util.Map;
 
 public class HttpServer {
-    private static final Integer PORT = 8888;
+    private static final Integer PORT;
+
+    static {
+        try {
+            String configPort = Config.getInstance().property("SERVER_PORT");
+            PORT = Integer.parseInt(configPort);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static void run(Logger logger) {
         Javalin app = Javalin.create();

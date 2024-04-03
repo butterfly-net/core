@@ -1,15 +1,26 @@
 package it.unibz.butterfly_net.ingestion_api.core;
 
+import it.unibz.butterfly_net.ingestion_api.core.utils.Config;
 import it.unibz.butterfly_net.ingestion_api.core.errors.CredentialsMismatchError;
 import it.unibz.butterfly_net.ingestion_api.core.errors.MissingRequiredHeaderError;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
 public class IngestionService {
-    public static final String AUTH_HEADER = "Authentication-Key";
-    public static final String PROJECT_HEADER = "Project-Id";
+    public static final String AUTH_HEADER;
+    public static final String PROJECT_HEADER;
+
+    static {
+        try {
+            AUTH_HEADER = Config.getInstance().property("AUTHENTICATION_HEADER_KEY");
+            PROJECT_HEADER = Config.getInstance().property("PROJECT_HEADER_KEY");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private final RawDataRepository rawDataRepository;
     private final ProjectRepository projectRepository;
