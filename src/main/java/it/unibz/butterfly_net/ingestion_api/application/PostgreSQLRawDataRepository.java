@@ -47,7 +47,6 @@ public class PostgreSQLRawDataRepository implements RawDataRepository {
             }
 
             preparedStatement.close();
-            connection.close();
         } catch (SQLException sqle) {
             logger.error(sqle.getMessage());
             throw new RuntimeException(sqle);

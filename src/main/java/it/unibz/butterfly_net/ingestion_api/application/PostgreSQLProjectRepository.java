@@ -48,7 +48,6 @@ public class PostgreSQLProjectRepository implements ProjectRepository {
 
             statement.close();
             resultSet.close();
-            connection.close();
             return project;
         } catch (SQLException e) {
             logger.error(e.getMessage());
