@@ -1,6 +1,8 @@
 package it.unibz.butterfly_net.core.agent_manager.domain.model;
 
 import it.unibz.butterfly_net.core.agent_manager.domain.errors.UnknownParserTypeError;
+import it.unibz.butterfly_net.core.agent_manager.domain.parsers.JavaScriptEngine;
+import it.unibz.butterfly_net.core.agent_manager.domain.parsers.LambdaFunctionCaller;
 
 import java.util.List;
 
@@ -15,4 +17,15 @@ public abstract class Parser {
         if (!isKnownType)
             throw new UnknownParserTypeError(type);
     }
+
+    public static Parser ofType(String type) {
+        validateType(type);
+
+        return switch (type) {
+            case JS_ENGINE_TYPE -> new JavaScriptEngine();
+            default -> new LambdaFunctionCaller();
+        };
+    }
+
+    public abstract ProcessedData parse(RawData rawData);
 }
