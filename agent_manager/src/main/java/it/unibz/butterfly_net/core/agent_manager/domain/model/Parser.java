@@ -1,8 +1,8 @@
 package it.unibz.butterfly_net.core.agent_manager.domain.model;
 
 import it.unibz.butterfly_net.core.agent_manager.domain.errors.UnknownParserTypeError;
-import it.unibz.butterfly_net.core.agent_manager.domain.parsers.JavaScriptEngine;
-import it.unibz.butterfly_net.core.agent_manager.domain.parsers.LambdaFunctionCaller;
+import it.unibz.butterfly_net.core.agent_manager.domain.app_services.JavaScriptEngine;
+import it.unibz.butterfly_net.core.agent_manager.domain.app_services.LambdaFunctionCaller;
 
 import java.util.List;
 

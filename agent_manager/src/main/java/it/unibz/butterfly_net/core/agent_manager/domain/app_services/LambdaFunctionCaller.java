@@ -1,10 +1,10 @@
-package it.unibz.butterfly_net.core.agent_manager.domain.parsers;
+package it.unibz.butterfly_net.core.agent_manager.domain.app_services;
 
 import it.unibz.butterfly_net.core.agent_manager.domain.model.Parser;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.ProcessedData;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.RawData;
 
-public class JavaScriptEngine extends Parser {
+public class LambdaFunctionCaller extends Parser {
     @Override
     public ProcessedData parse(RawData rawData) {
         return null;
