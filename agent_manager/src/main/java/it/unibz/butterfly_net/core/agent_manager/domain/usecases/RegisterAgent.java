@@ -2,6 +2,7 @@ package it.unibz.butterfly_net.core.agent_manager.domain.usecases;
 
 import it.unibz.butterfly_net.core.agent_manager.domain.model.Agent;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.AgentRepository;
+import it.unibz.butterfly_net.core.agent_manager.domain.model.Parser;
 import it.unibz.butterfly_net.core.agent_manager.domain.usecases.dto.AgentRegistrationForm;
 
 public class RegisterAgent {
@@ -13,6 +14,11 @@ public class RegisterAgent {
     }
 
     public Agent register(AgentRegistrationForm form) {
+        String parserType = form
+                .capability()
+                .parserDescriptor()
+                .type();
+        Parser.validateType(parserType);
         return this.agentRepository.create(from(form));
     }
 
