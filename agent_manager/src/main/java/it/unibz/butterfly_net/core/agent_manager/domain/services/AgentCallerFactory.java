@@ -41,7 +41,7 @@ public class AgentCallerFactory {
         this.ensureRequest();
 
         AgentCaller caller = switch (this.strategy) {
-            case "logger" -> loggerCaller();
+            case "logger" -> loggerCaller(this.agent, this.request);
             default -> emptyCaller();
         };
 
@@ -65,11 +65,11 @@ public class AgentCallerFactory {
         return () -> {};
     }
 
-    private AgentCaller loggerCaller() {
+    private AgentCaller loggerCaller(Agent agent, CapabilityRequest request) {
         return () -> {
             String logLine = String.format(
                     "Calling %s#%d with %s",
-                    this.agent.getName(), this.agent.getId(), this.request.inputs()
+                    agent.getName(), agent.getId(), request.inputs()
             );
             logger.info(logLine);
         };

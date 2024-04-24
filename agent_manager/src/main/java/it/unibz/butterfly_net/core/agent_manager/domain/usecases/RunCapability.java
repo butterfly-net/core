@@ -22,7 +22,7 @@ public class RunCapability {
         this.agentCallerFactory = agentCallerFactory;
     }
 
-    void run(CapabilityRequest request) {
+    public void run(CapabilityRequest request) {
         CapabilityRequest validRequest = this.capabilityRequestValidator.validate(request);
         Agent agent = this.capabilityAgentFinder.findAgentByCapabilityName(validRequest.name());
         AgentCaller agentCaller = this.prepareAgentCall(agent, validRequest);
