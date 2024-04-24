@@ -4,10 +4,13 @@ import it.unibz.butterfly_net.core.agent_manager.domain.model.Agent;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.AgentCaller;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.CapabilityRequest;
 import it.unibz.butterfly_net.core.utils.Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class AgentCallerFactory {
+    private final Logger logger = LoggerFactory.getLogger(AgentCallerFactory.class);
     private final String strategy;
     private Agent agent = null;
     private CapabilityRequest request = null;
@@ -38,6 +41,7 @@ public class AgentCallerFactory {
         this.ensureRequest();
 
         AgentCaller caller = switch (this.strategy) {
+            case "logger" -> loggerCaller();
             default -> emptyCaller();
         };
 
@@ -59,5 +63,15 @@ public class AgentCallerFactory {
 
     private AgentCaller emptyCaller() {
         return () -> {};
+    }
+
+    private AgentCaller loggerCaller() {
+        return () -> {
+            String logLine = String.format(
+                    "Calling %s#%d with %s",
+                    this.agent.getName(), this.agent.getId(), this.request.inputs()
+            );
+            logger.info(logLine);
+        };
     }
 }
