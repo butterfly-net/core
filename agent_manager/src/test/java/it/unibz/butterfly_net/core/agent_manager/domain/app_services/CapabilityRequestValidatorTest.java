@@ -2,6 +2,7 @@ package it.unibz.butterfly_net.core.agent_manager.domain.app_services;
 
 import it.unibz.butterfly_net.core.agent_manager.domain.errors.CapabilityNotFoundError;
 import it.unibz.butterfly_net.core.agent_manager.domain.errors.MissingRequiredInputError;
+import it.unibz.butterfly_net.core.agent_manager.domain.errors.WrongInputTypeError;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.Agent;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.CapabilityRepository;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.CapabilityRequest;
@@ -13,6 +14,7 @@ import it.unibz.butterfly_net.core.agent_manager.domain.utils.MockCapabilityRepo
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,9 +60,114 @@ class CapabilityRequestValidatorTest {
         );
     }
 
+    @Test
+    void givenWrongTypeInput_thenThrowsWrongInputTypeError() {
+        // given
+        String capabilityName = "test";
+        String inputName = "attr";
+        ParserInputDescriptor requiredStringNamedAttr =
+            new ParserInputDescriptor("String", inputName, true);
+        mockCapabilityRepository.mockFind(toReturnSingleInput(capabilityName, requiredStringNamedAttr));
+        CapabilityRequest request = simpleRequestFor(capabilityName,Set.of(
+                Map.of(inputName, 4L)
+        ));
+
+        // then ... when
+        assertThrows(
+                WrongInputTypeError.class,
+                () -> underTest.validate(request)
+        );
+    }
+
+    @Test
+    void givenWellDefinedRequest_thenDoesNotThrow() {
+        // given
+        String capabilityName = "test";
+        String inputName = "attr";
+        String inputValue = "any string";
+        String inputType = inputValue.getClass().getSimpleName();
+        ParserInputDescriptor requiredStringNamedAttr =
+                new ParserInputDescriptor(inputType, inputName, true);
+        mockCapabilityRepository.mockFind(toReturnSingleInput(capabilityName, requiredStringNamedAttr));
+        CapabilityRequest request = simpleRequestFor(capabilityName, Set.of(
+                Map.of(inputName, inputValue)
+        ));
+
+        // then ... when
+        assertDoesNotThrow(() -> underTest.validate(request));
+    }
+
+    @Test
+    void givenWellDefinedComplexRequest_thenDoesNotThrow() {
+        // given
+        Scenario scenario = this.complexMatchingRequest();
+        mockCapabilityRepository.mockFind(scenario.mockRepository());
+        CapabilityRequest request = scenario.request();
+
+        // then ... when
+        assertDoesNotThrow(() -> underTest.validate(request));
+    }
+
+    @Test
+    void givenWellDefinedComplexRequest_thenStripesExtraInputs() {
+        // given
+        String extraName = "foo";
+        String extraValue = "bar";
+        Scenario scenario = this.complexMatchingRequest(extraName, extraValue);
+        mockCapabilityRepository.mockFind(scenario.mockRepository());
+        CapabilityRequest request = scenario.request();
+
+        // when
+        CapabilityRequest newRequest = underTest.validate(request);
+
+        // then
+        boolean containsExtra = newRequest.inputs()
+                .stream()
+                .anyMatch(pair -> pair.containsKey(extraName));
+
+        assertFalse(containsExtra);
+    }
+
+    private record Scenario(
+            CapabilityRepository mockRepository,
+            CapabilityRequest request
+    ) {}
+
+    private Scenario complexMatchingRequest() {
+        return complexMatchingRequest("unforeseen", "whatever");
+    }
+
+    private Scenario complexMatchingRequest(String extraName, String extraValue) {
+        CapabilityRepository mockRepository = (capabilityName -> new Agent(
+                capabilityName,
+                new Capability(null, Set.of(
+                        new ParserInputDescriptor("Long", "id", true),
+                        new ParserInputDescriptor("String", "name", true),
+                        new ParserInputDescriptor("String", "description", false)
+                ))
+        ));
+
+        CapabilityRequest request = new CapabilityRequest(
+                "test", Set.of(
+                        Map.of("id", 42L),
+                        Map.of("name", "foo"),
+                        Map.of(extraName, extraValue)
+                )
+        );
+
+        return new Scenario(mockRepository, request);
+    }
+
     private CapabilityRepository toReturnSingleInput(ParserInputDescriptor inputDescriptor) {
+        return toReturnSingleInput("test", inputDescriptor);
+    }
+
+    private CapabilityRepository toReturnSingleInput(
+            String capabilityName,
+            ParserInputDescriptor inputDescriptor
+    ) {
         return (String name) -> new Agent(
-                "test",
+                capabilityName,
                 new Capability(
                         new ParserDescriptor("foo", "bar"),
                         Set.of(inputDescriptor)
@@ -69,6 +176,10 @@ class CapabilityRequestValidatorTest {
     }
 
     private CapabilityRequest simpleRequestFor(String capabilityName) {
-        return new CapabilityRequest(capabilityName, Set.of());
+        return simpleRequestFor(capabilityName, Set.of());
+    }
+
+    private CapabilityRequest simpleRequestFor(String capabilityName, Set<Map<String,Object>> inputs) {
+        return new CapabilityRequest(capabilityName, inputs);
     }
 }
