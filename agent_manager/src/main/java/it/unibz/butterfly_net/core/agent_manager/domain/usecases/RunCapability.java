@@ -1,7 +1,7 @@
 package it.unibz.butterfly_net.core.agent_manager.domain.usecases;
 
-import it.unibz.butterfly_net.core.agent_manager.domain.app_services.AgentCallerFactory;
-import it.unibz.butterfly_net.core.agent_manager.domain.app_services.CapabilityRequestValidator;
+import it.unibz.butterfly_net.core.agent_manager.domain.services.AgentCallerFactory;
+import it.unibz.butterfly_net.core.agent_manager.domain.services.CapabilityRequestValidator;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.Agent;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.AgentCaller;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.CapabilityAgentFinder;

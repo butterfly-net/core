@@ -1,4 +1,4 @@
-package it.unibz.butterfly_net.core.agent_manager.domain.app_services;
+package it.unibz.butterfly_net.core.agent_manager.domain.services;
 
 import it.unibz.butterfly_net.core.agent_manager.domain.model.Parser;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.ProcessedData;
