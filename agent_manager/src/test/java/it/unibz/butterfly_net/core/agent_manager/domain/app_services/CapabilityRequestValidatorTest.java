@@ -4,13 +4,13 @@ import it.unibz.butterfly_net.core.agent_manager.domain.errors.CapabilityNotFoun
 import it.unibz.butterfly_net.core.agent_manager.domain.errors.MissingRequiredInputError;
 import it.unibz.butterfly_net.core.agent_manager.domain.errors.WrongInputTypeError;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.Agent;
-import it.unibz.butterfly_net.core.agent_manager.domain.model.CapabilityRepository;
+import it.unibz.butterfly_net.core.agent_manager.domain.model.CapabilityAgentFinder;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.CapabilityRequest;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.agent.Capability;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.agent.ParserDescriptor;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.agent.ParserInputDescriptor;
-import it.unibz.butterfly_net.core.agent_manager.domain.utils.MockCapabilityRepository;
-import it.unibz.butterfly_net.core.agent_manager.domain.utils.MockCapabilityRepositoryImpl;
+import it.unibz.butterfly_net.core.agent_manager.domain.utils.MockCapabilityAgentFinder;
+import it.unibz.butterfly_net.core.agent_manager.domain.utils.MockCapabilityAgentFinderImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,12 +20,12 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CapabilityRequestValidatorTest {
-    private MockCapabilityRepository mockCapabilityRepository;
+    private MockCapabilityAgentFinder mockCapabilityRepository;
     private CapabilityRequestValidator underTest;
 
     @BeforeEach
     void setup() {
-        mockCapabilityRepository = new MockCapabilityRepositoryImpl();
+        mockCapabilityRepository = new MockCapabilityAgentFinderImpl();
         underTest = new CapabilityRequestValidator(mockCapabilityRepository);
     }
 
@@ -129,7 +129,7 @@ class CapabilityRequestValidatorTest {
     }
 
     private record Scenario(
-            CapabilityRepository mockRepository,
+            CapabilityAgentFinder mockRepository,
             CapabilityRequest request
     ) {}
 
@@ -138,7 +138,7 @@ class CapabilityRequestValidatorTest {
     }
 
     private Scenario complexMatchingRequest(String extraName, String extraValue) {
-        CapabilityRepository mockRepository = (capabilityName -> new Agent(
+        CapabilityAgentFinder mockRepository = (capabilityName -> new Agent(
                 capabilityName,
                 new Capability(null, Set.of(
                         new ParserInputDescriptor("Long", "id", true),
@@ -158,11 +158,11 @@ class CapabilityRequestValidatorTest {
         return new Scenario(mockRepository, request);
     }
 
-    private CapabilityRepository toReturnSingleInput(ParserInputDescriptor inputDescriptor) {
+    private CapabilityAgentFinder toReturnSingleInput(ParserInputDescriptor inputDescriptor) {
         return toReturnSingleInput("test", inputDescriptor);
     }
 
-    private CapabilityRepository toReturnSingleInput(
+    private CapabilityAgentFinder toReturnSingleInput(
             String capabilityName,
             ParserInputDescriptor inputDescriptor
     ) {

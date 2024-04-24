@@ -3,7 +3,7 @@ package it.unibz.butterfly_net.core.agent_manager.domain.app_services;
 import it.unibz.butterfly_net.core.agent_manager.domain.errors.MissingRequiredInputError;
 import it.unibz.butterfly_net.core.agent_manager.domain.errors.WrongInputTypeError;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.Agent;
-import it.unibz.butterfly_net.core.agent_manager.domain.model.CapabilityRepository;
+import it.unibz.butterfly_net.core.agent_manager.domain.model.CapabilityAgentFinder;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.CapabilityRequest;
 import it.unibz.butterfly_net.core.agent_manager.domain.model.agent.ParserInputDescriptor;
 
@@ -13,10 +13,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CapabilityRequestValidator {
-    private final CapabilityRepository capabilityRepository;
+    private final CapabilityAgentFinder capabilityAgentFinder;
 
-    public CapabilityRequestValidator(CapabilityRepository capabilityRepository) {
-        this.capabilityRepository = capabilityRepository;
+    public CapabilityRequestValidator(CapabilityAgentFinder capabilityAgentFinder) {
+        this.capabilityAgentFinder = capabilityAgentFinder;
     }
 
     public CapabilityRequest validate(CapabilityRequest request) {
@@ -78,7 +78,7 @@ public class CapabilityRequestValidator {
     }
 
     private Set<ParserInputDescriptor> getInputDescriptors(CapabilityRequest request) {
-        Agent agent = capabilityRepository
+        Agent agent = capabilityAgentFinder
                 .findAgentByCapabilityName(request.name());
         return agent
                 .getCapability()

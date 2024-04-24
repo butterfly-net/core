@@ -1,10 +1,10 @@
 package it.unibz.butterfly_net.core.agent_manager.domain.utils;
 
 import it.unibz.butterfly_net.core.agent_manager.domain.model.Agent;
-import it.unibz.butterfly_net.core.agent_manager.domain.model.CapabilityRepository;
+import it.unibz.butterfly_net.core.agent_manager.domain.model.CapabilityAgentFinder;
 
-public class MockCapabilityRepositoryImpl implements MockCapabilityRepository {
-    private CapabilityRepository behavior = (String name) -> {
+public class MockCapabilityAgentFinderImpl implements MockCapabilityAgentFinder {
+    private CapabilityAgentFinder behavior = (String name) -> {
         throw new RuntimeException("mock not implemented");
     };
 
@@ -14,7 +14,7 @@ public class MockCapabilityRepositoryImpl implements MockCapabilityRepository {
     }
 
     @Override
-    public void mockFind(CapabilityRepository mockBehavior) {
+    public void mockFind(CapabilityAgentFinder mockBehavior) {
         this.behavior = mockBehavior;
     }
 }

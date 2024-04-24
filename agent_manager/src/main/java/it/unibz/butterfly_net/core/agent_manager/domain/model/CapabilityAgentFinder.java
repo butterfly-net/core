@@ -1,5 +1,5 @@
 package it.unibz.butterfly_net.core.agent_manager.domain.model;
 
-public interface CapabilityRepository {
+public interface CapabilityAgentFinder {
     Agent findAgentByCapabilityName(String capability);
 }
