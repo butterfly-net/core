@@ -19,7 +19,7 @@ public class HttpServer {
 
     static {
         try {
-            String configPort = Config.getInstance().property("SERVER_PORT");
+            String configPort = Config.getInstance().property("INGESTION_SERVER_PORT");
             PORT = Integer.parseInt(configPort);
         } catch (IOException e) {
             throw new RuntimeException(e);
